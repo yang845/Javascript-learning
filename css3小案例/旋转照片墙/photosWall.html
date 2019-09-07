@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="zh/en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <style>
+        * {
+            padding: 0;
+            margin: 0;
+        }
+
+        :root {
+            height: 100%;
+        }
+
+        body {
+            height: 100%;
+            perspective: 4000px;
+        }
+
+        @keyframes round {
+            0% {
+                transform: rotatey(0deg);
+            }
+
+            100% {
+                transform: rotatey(360deg);
+            }
+        }
+
+        .wrapper {
+            position: absolute;
+            left: calc(50% - 150px);
+            top: calc(50% - 150px);
+            width: 300px;
+            height: 300px;
+            transform-style: preserve-3d;
+            animation: round 10s linear infinite;
+        }
+
+        img {
+            position: absolute;
+            width: 300px;
+            border: 1px solid #000;
+        }
+
+        img:nth-of-type(1) {
+            transform: rotatey(45deg) translatez(500px);
+        }
+
+        img:nth-of-type(2) {
+            transform: rotatey(90deg) translatez(500px);
+        }
+
+        img:nth-of-type(3) {
+            transform: rotatey(135deg) translatez(500px);
+        }
+
+        img:nth-of-type(4) {
+            transform: rotatey(180deg) translatez(500px);
+        }
+
+        img:nth-of-type(5) {
+            transform: rotatey(225deg) translatez(500px);
+        }
+
+        img:nth-of-type(6) {
+            transform: rotatey(270deg) translatez(500px);
+        }
+
+        img:nth-of-type(7) {
+            transform: rotatey(315deg) translatez(500px);
+        }
+
+        img:nth-of-type(8) {
+            transform: rotatey(360deg) translatez(500px);
+        }
+    </style>
+</head>
+
+<body>
+    <div class="wrapper">
+        
+        <img src="img/1.jpg" alt="">
+        <img src="img/1.jpg" alt="">
+        <img src="img/1.jpg" alt="">
+        <img src="img/1.jpg" alt="">
+        <img src="img/1.jpg" alt="">
+        <img src="img/1.jpg" alt="">
+        <img src="img/1.jpg" alt="">
+        <img src="img/1.jpg" alt="">
+
+    </img>
+
+    <script type="text/javascript">
+        document.body.onmousemove = function (e){
+            this.style.perspectiveOrigin = "" + e.pageX + "px " + e.pageY + "px";
+        }
+    </script>
+</body>
+
+</html>

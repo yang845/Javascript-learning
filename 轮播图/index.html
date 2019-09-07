@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <style>
+        *{
+            padding: 0px;
+            margin: 0px;
+            list-style: none;
+        }
+
+        .slideWrapper {
+            position: relative;
+            width: 500px;
+            height: 300px;
+            margin: 100px auto 0;
+            /* border: 1px solid black; */
+            overflow: hidden;
+        }
+
+        .slideWrapper .slidePage {
+            position: absolute;
+            left: 0;
+            width: 3000px;
+            height: 300px;
+        }
+        
+        .slideWrapper .slidePage li {
+            float: left;
+            width: 500px;
+            height: 300px;
+        }
+
+        .slideWrapper .slidePage li img {
+            width: 100%;
+            height: 100%;
+        }
+
+        .slideWrapper .btn {
+            position: absolute;
+            top: 50%;
+            margin-top: -25px;
+            color: #fff;
+            font-size: 24px;
+            width: 50px;
+            height: 50px;
+            line-height: 50px;
+            text-align: center;
+            opacity: 0.2;
+            background-color: black;
+            cursor: pointer;
+        }
+
+        .slideWrapper .btn:hover {
+            opacity: 0.7;
+        }
+
+        .slideWrapper .btnLeft {
+            left: 0;
+        }
+
+        .slideWrapper .btnRight {
+            right: 0;
+        }
+
+        .slideWrapper .slideIndex {
+            position: absolute;
+            bottom: 0px;
+            text-align: center;
+            width: 500px;
+            height: 60px;
+            line-height: 60px;
+        }
+
+        .slideWrapper .slideIndex span{
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            margin-right: 10px;
+            border-radius: 50%;        
+            background-color: #fff;
+            cursor: pointer;
+        }
+
+        .slideWrapper .slideIndex .active {
+            background-color: #f40;
+        }
+
+    </style>
+</head>
+<body>
+    <div class="slideWrapper">
+        <ul class="slidePage">
+            <li><img src="1.jpg" alt=""></li>
+            <li><img src="2.jpg" alt=""></li>
+            <li><img src="3.jpg" alt=""></li>
+            <li><img src="4.jpg" alt=""></li>
+            <li><img src="5.jpg" alt=""></li>
+            <li><img src="1.jpg" alt=""></li>
+        </ul>
+        <span class="btn btnLeft">&lt;</span>
+        <span class="btn btnRight">&gt;</span>
+        <div class="slideIndex">
+            <span class="active"></span>
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+    </div>
+    <script>
+    
+    var slidePage = document.getElementsByClassName('slidePage')[0];
+    var oLiArr = document.getElementsByClassName('slidePage')[0].getElementsByTagName('li');
+    var oSpanArr = document.getElementsByClassName('slideIndex')[0].getElementsByTagName('span');
+    var oBtnLeft = document.getElementsByClassName('slideWrapper')[0].getElementsByClassName('btnLeft')[0];
+    var oBtnRight = document.getElementsByClassName('slideWrapper')[0].getElementsByClassName('btnRight')[0];
+    var num = oLiArr.length - 1;
+    var moveWidth = slidePage.children[0].offsetWidth;
+    var lock = true;
+    var timer = null;
+    var index = 0;
+
+    for(var i = 0; i < oSpanArr.length; i ++) {
+        (function (j) {
+            oSpanArr[j].onclick = function (e) {
+                lock = false;
+                index = j;
+                changeIndex(index);
+                startMove(slidePage, {left: - index * moveWidth}, function () {
+                    lock = true;                 
+                    timer = setTimeout(autoMove, 1500);
+                });
+            }
+        })(i);
+    }
+
+    oBtnLeft.onclick = function () {
+        autoMove('right->left');
+    }
+    
+    oBtnRight.onclick = function () {
+        autoMove('left->right');
+    }
+    
+    //默认轮播方向/right按钮  'left->right' / undefined
+    //点击left按钮  'right->left' 
+    function autoMove (direction) {
+        if (lock) {
+            lock = false;
+            clearTimeout(timer);
+            if(!direction || direction == 'left->right') {
+                index ++;
+                startMove(slidePage, {left: slidePage.offsetLeft - moveWidth}, function () {
+                    if (slidePage.offsetLeft == - num * moveWidth) {
+                        index = 0;
+                        slidePage.style.left = '0px';
+                    }
+                    timer = setTimeout(autoMove, 1500);
+                    lock = true;
+                    changeIndex(index);
+                });
+            }else if (direction == 'right->left') {
+                if (slidePage.offsetLeft == 0) {
+                    index = num;
+                    slidePage.style.left = - num * moveWidth + 'px';
+                }
+                index --;
+                startMove(slidePage, {left: slidePage.offsetLeft + moveWidth}, function () { 
+                    timer = setTimeout(autoMove, 1500);
+                    lock = true;
+                    changeIndex(index);
+                });
+            }
+            
+        }
+    }
+
+    function changeIndex(_index) {
+        for(var i = 0; i < oSpanArr.length; i ++) {
+            oSpanArr[i].className = '';
+        }
+        oSpanArr[_index].className = 'active';
+    }
+
+    function getStyle (dom, attr) {
+            if (window.getComputedStyle) {
+                return window.getComputedStyle(dom, null)[attr];
+            }else {
+                return dom.currentStyle[attr];
+            }
+        }
+
+    function startMove (dom, attrObj, callback) {
+        //清除定时器
+        clearInterval(dom.timer);
+        var iSpeed = null, iCur = null;
+        dom.timer = setInterval(function () {
+            //停止标志位
+            var bStop = true;
+            //遍历
+            for (var attr in attrObj) {
+                //opacity属性额外处理
+                if (attr == 'opacity') {
+                    iCur = parseFloat( getStyle(dom, attr) ) * 100;
+                }else {
+                    iCur = parseInt( getStyle(dom, attr) );
+                }
+                //定义变化速度
+                iSpeed = (attrObj[attr] - iCur) / 7;
+                //对于正负的速度进行相应的取整
+                iSpeed = iSpeed > 0 ? Math.ceil(iSpeed) : Math.floor(iSpeed);
+                if (attr == 'opacity') {
+                    dom.style.opacity = (iCur + iSpeed) / 100; 
+                }else {
+                    dom.style[attr] = iCur + iSpeed + 'px';
+                }
+                //判断停止条件
+                if (iCur != attrObj[attr]) {
+                    bStop = false;
+                }
+            }
+            //停止并执行回调函数
+            if (bStop) {
+                clearInterval(dom.timer);
+                typeof callback == 'function' && callback();
+            }
+        }, 30);
+    }
+
+    autoMove();
+
+    </script>
+        
+
+</body>
+</html>
