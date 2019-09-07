@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <style>
+        #can {
+            display: block;
+            margin: 0 auto;
+            border: 1px solid black;
+        }
+
+        .deg-box {
+            text-align: center;
+        }
+
+        #alpha {
+            position: absolute;
+            padding: 20px 0;
+            font-size: 18px;
+        }
+
+        #alpha span:not(.deg) {
+            position: relative;
+            right: 0px;
+            top: -10px;
+            font-size: 12px;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- <div id="main"></div> -->
+    <canvas id="can" width="300" height="360"></canvas>
+    <div class="deg-box">
+        <span id="alpha">
+            <span class="deg">0</span>
+            <span>o</span>
+        </span>
+    </div>
+    <script>
+        var oCanvas = document.getElementById('can');
+        var ctx = oCanvas.getContext('2d');
+
+        function draw(deg) {
+            ctx.restore();
+            ctx.save();
+            ctx.clearRect(0, 0, 300, 360);
+            ctx.beginPath();
+            ctx.arc(150, 180, 120, 0, Math.PI * 2, 0);
+            ctx.stroke();
+            ctx.closePath();
+            ctx.save();
+
+            ctx.beginPath();
+            ctx.translate(150, 180);
+            ctx.fillStyle = "red";
+            ctx.font = "20px Georgia";
+            ctx.fillText("北", -10, -130);
+            ctx.rotate(Math.PI / 2);
+            ctx.translate(-110, 0);
+            ctx.moveTo(-10, 0);
+            ctx.lineTo(10, 0);
+            ctx.stroke();
+            ctx.closePath();
+
+            ctx.restore();
+            ctx.save();
+            ctx.beginPath();
+            ctx.translate(150, 180);
+            ctx.font = "20px Georgia";
+            ctx.fillText("南", -10, 140);
+            ctx.rotate(Math.PI / 2);
+            ctx.translate(110, 0);
+            ctx.moveTo(-10, 0);
+            ctx.lineTo(10, 0);
+            ctx.stroke();
+            ctx.closePath();
+
+            ctx.restore();
+            ctx.save();
+            ctx.beginPath();
+            ctx.translate(150, 180);
+            ctx.font = "20px Georgia";
+            ctx.fillText("西", -150, 5);
+            ctx.rotate(0);
+            ctx.translate(-110, 0);
+            ctx.moveTo(-10, 0);
+            ctx.lineTo(10, 0);
+            ctx.stroke();
+            ctx.closePath();
+
+            ctx.restore();
+            ctx.save();
+            ctx.beginPath();
+            ctx.translate(150, 180);
+            ctx.font = "20px Georgia";
+            ctx.fillText("东", 130, 5);
+            ctx.rotate(0);
+            ctx.translate(110, 0);
+            ctx.moveTo(-10, 0);
+            ctx.lineTo(10, 0);
+            ctx.stroke();
+            ctx.closePath();
+
+            ctx.restore();
+            ctx.save();
+            ctx.beginPath();
+            ctx.translate(150, 180);
+            ctx.rotate(deg);
+            ctx.moveTo(-10, 20);
+            ctx.lineTo(0, -100);
+            ctx.lineTo(10, 20);
+            ctx.lineTo(0, 0);
+            ctx.fillStyle = 'blue';
+            ctx.closePath();
+            ctx.fill();
+        }
+
+        draw(0);
+
+        var oDeg = document.getElementsByClassName('deg')[0];
+        window.addEventListener('deviceorientation', function (e) {
+            var alpha = e.alpha ? Math.round(e.alpha) : 0;
+            draw(alpha / 360 * Math.PI * 2);
+            oDeg.innerHTML = alpha;
+        })
+    </script>
+</body>
+
+</html>
